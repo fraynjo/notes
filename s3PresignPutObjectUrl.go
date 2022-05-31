@@ -7,8 +7,8 @@ import (
 	"regexp"
 	"strings"
 	"time"
-  "github.com/aws/aws-sdk-go/aws/credentials"
-  "github.com/aws/aws-sdk-go/aws"
+  	"github.com/aws/aws-sdk-go/aws/credentials"
+  	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
@@ -20,9 +20,10 @@ const (
   uploadRoot = ""
   bucket = ""
   expired = 300
+  fileDomain="https://xxxxxxx.com/"
 )
 
-// filen
+// filename: xxxxxxxxx.png
 func GetAWSS3PredesignedUrl(filename string) (putUrl string, fileUrl string, err error) {
 	newFileName := uuid.NewV4().String()
 	sess, _ := session.NewSession(
@@ -35,12 +36,12 @@ func GetAWSS3PredesignedUrl(filename string) (putUrl string, fileUrl string, err
 	)
 	// Create S3 service client
 	svc := s3.New(sess)
-	key := uploadRoot + newFileName + "_" + a.getFilename(filename)
+	key := uploadRoot + newFileName + "_" + getFilename(filename)
 	resp, _ := svc.PutObjectRequest(&s3.PutObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
 	})
-	fileUrl = configs.App.AwsConf.FilePath + key
+	fileUrl = fileDomain + key
 	putUrl, err = resp.Presign(5 * time.Minute)
 	return
 }
